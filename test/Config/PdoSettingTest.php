@@ -3,14 +3,15 @@
 use PHPUnit\Framework\TestCase;
 use InfoMail\Config\PdoSetting;
 
-include 'vendor/autoload.php';
-include 'infomail/Config/PdoSetting.php';
+include_once 'vendor/autoload.php';
+include_once 'infomail/Config/PdoSetting.php';
 
 class PdoSettingTest extends TestCase
 {
 	public function testGetConfig()
 	{
-		$val = PdoSetting::getConfig();
+		$pdo = new PdoSetting();
+		$val = $pdo->getConfig();
 		$user = $val['user'];
 		$pass = $val['pass'];
 		$pdo = $val['pdo'];

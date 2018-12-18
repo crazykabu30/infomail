@@ -3,8 +3,8 @@
 use PHPUnit\Framework\TestCase;
 use InfoMail\Database\MailDb;
 
-include 'vendor/autoload.php';
-include 'infomail/src/Database/MailDb.php';
+include_once 'vendor/autoload.php';
+include_once 'infomail/src/Database/MailDb.php';
 
 class MailDbTest extends TestCase 
 {
@@ -12,7 +12,7 @@ class MailDbTest extends TestCase
 	{
 		$pdo = new Pdo();
 		$settings = $pdo->getConfig();
-		$class = new MailDb($settings);
+		$class = new MailDb();
 		$val = $class->getTerminals();
 		$this->assertEquals(array(
 			['1608']=>'1608',
@@ -38,11 +38,12 @@ class MailDbTest extends TestCase
 			['wide']=>'ワイド'
 		),$val);
 	} */
-	public function testGetTids()
+	public function testGetTerminals()
 	{
-		$pdo = new Pdo();
-		$settings = $pdo->getConfig();
-		$class = new MailDb($settings);
+		$class = new MailDb();
+		$val = $class->getTerminals();
+		$this->assertFalse($val);
+		$class->setAcl('admin');
 		$val = $class->getTerminals();
 		$this->assertEquals(array(
 			'430',
@@ -51,4 +52,12 @@ class MailDbTest extends TestCase
 			'830'
 		),$val);
 	}
+	public function testIsAdmin()
+	{
+		$class = new MailDb();
+		$this->assertFalse($class->isAdmin());
+		$class->setAcl('admin');
+		$this->assertTrue($class->isAdmin());
+	}
+
 }

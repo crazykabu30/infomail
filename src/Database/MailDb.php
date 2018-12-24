@@ -5,6 +5,7 @@ namespace InfoMail\Database;
 use InfoMail\Config\PdoSetting;
 
 include_once 'infomail/Config/PdoSetting.php';
+// include_once '../../Config/PdoSetting.php';
 
 class MailDb
 {
@@ -132,8 +133,8 @@ class MailDb
         $stmt = $db->query($sql);
         $val = array();
         while ($row = $stmt->fetch()) {
-            // $val[$row['terminal_id']] = $row['name'];
-            $val[] = $row['terminal_id'];
+            $val[$row['terminal_id']] = $row['disp_name'];
+            // $val[] = $row['terminal_id'];
         }
         $this->terminals = $val;
     }

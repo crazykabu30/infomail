@@ -5,31 +5,58 @@ namespace InfoMail\Database;
 class Mail
 {
 	/**
-	 * @var array list of send to addresses
+	 * @var string 全員宛/出勤者宛/個人宛
+	 * 
+	 * all/out/ind
 	 */
-	public $sendTo;
+	protected $visibility;
 	/**
-	 * @var string title
+	 * @var array 送信先
 	 */
-	public $title;
+	protected $sendTo;
 	/**
-	 * @var string content-body
+	 * @var string 件名
 	 */
-	public $body;
-	// constructor function
+	protected $title;
+	/**
+	 * @var string 本文
+	 */
+	protected $body;
+	/**
+	 * コンストラクタ関数
+	 */
 	public function __construct()
 	{
+		$this->visibility = 'ind';
 		$this->sendTo = array();
 		$this->title = '';
 		$this->body = '';
 	}
+	/** 
+	 * 通知範囲を設定する
+	 */
+	public function setVisibility($val)
+	{
+		if ($val !== 'all' && $val !== 'out' && $val !== 'ind') {
+			return false;
+		}
+		$this->visibility = $val;
+		return true;
+	}
+	/** 
+	 * 通知範囲を取得する
+	 */
+	public function visibleTo()
+	{
+		return $this->visibility;
+	}
 	/**
 	 * 送信先を登録する
 	 * 
-	 * @param string str(adress)
+	 * @param string 送信先メールアドレス
 	 * @return bool
 	 */
-	public function setSendTo($val)
+	public function addSendTo($val)
 	{
 		$this->sendTo[] = $val;
 		return true;
@@ -37,14 +64,14 @@ class Mail
 	/**
 	 * 送信先を確認する
 	 * 
-	 * @return array list-of-str(address)
+	 * @return array 連絡先メールアドレス一覧
 	 */
 	public function getSendTo()
 	{
 		return $this->sendTo;
 	}
 	/**
-	 * タイトルを登録する
+	 * 件名をセットする
 	 * 
 	 * @var string
 	 */
@@ -54,7 +81,7 @@ class Mail
 		return true;
 	}
 	/**
-	 * タイトルを確認する
+	 * セットした件名を取得する
 	 *
 	 * @return string
 	 */
@@ -63,7 +90,7 @@ class Mail
 		return $this->title;
 	}
 	/**
-	 * 本文を登録する
+	 * 本文をセットする
 	 * 
 	 * @var string
 	 */
@@ -73,7 +100,7 @@ class Mail
 		return true;
 	}
 	/**
-	 * 本文を確認する
+	 * セットした本文を取得する
 	 *
 	 * @return string
 	 */
@@ -82,9 +109,26 @@ class Mail
 		return $this->body;
 	}
 	/**
-	 * メールを送る
+	 * メール情報を取得する（データ登録用）
+	 * 
+	 * @return array|bool ('visible'=>'ind','to'=>array('***@gmail.com','***@gmail.com'),'title'=>'タイトル','body'=>'本文')
 	 */
+	public function getMailData()
+	{
+		if ($this->visibility!=='all' && $this->sendTo == array()) {
+			return false;
+		}
+		if ($this->title=='' || $this->body=='') {
+			return false;
+		}
+		return array(
+			'visible'=>$this->visibility,
+			'to'=>$this->sendTo,
+			'title'=>$this->title,
+			'body'=>$this->body
+		);
+	}
 	/**
-	 * メールコンテンツをDBに登録する
+	 * メールを送る
 	 */
 }

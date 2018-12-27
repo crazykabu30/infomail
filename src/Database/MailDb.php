@@ -154,29 +154,82 @@ class MailDb
     /**
      * @return bool
      */
-    public function setOids()
+    // 要修正
+    public function setOids($val='')
     {
         if (!$this->isAdmin()) {return false;}
-        $sql = 'select * from out_date where out_date = curdate() AND in_out = "1";';
+        if ($val=='') {
+            $sql = 'select * from out_date where out_date = curdate() AND in_out = "1";';
+        } else {
+            $sql = 'select * from out_date where out_date = "' . $val . '" AND in_out = "1";';   
+        }
         $db = $this->getDb();
         $stmt = $db->query($sql);
-        $val = array();
+        $return = array();
         while ($row = $stmt->fetch()) {
-            $val[] = $row['terminal_id'];
+            $return[] = $row['terminal_id'];
         }
-        return $this->oid = $val;
+        $this->oids = $return;
+        return true;
     }
     /**
      * @return array|bool
      */
-    public function getOids()
+    public function getOids($val='')
     {
         if (!$this->isAdmin()) {return false;}
-        if (!isset($this->oids)) {
-            if ($this->setOids()) {
-                return false;
-            }
-        }
-        return $this->oids;
+        $this->setOids($val);
+        return $this->oids;    
     }
+    /**
+     * メールコンテンツをDBに登録する（挿入文）
+     *
+     * @var bool isToAll
+     * @var string title
+     * @var string body
+     * @return bool
+     */
+    public function insertMail($isToAll,$title,$body)
+    {
+        if (!$this->isAdmin()) {return false;}
+        if ($isToAll) {$isToAll='1';}
+        if (!$isToAll) {$isToAll='0';}
+        $sql = 'INSERT INTO mail_for_crew (datetime,for_all,title,body) VALUES (now(),"' . $isToAll . '","' . $title . '","' . $body . '");';
+        // return $sql;
+        /*
+         * except as below ...
+        INSERT INTO mail_for_crew (
+            datetime,
+            for_all,
+            title,body
+        ) VALUES (
+            now(),
+            '1',
+            'title...',
+            'body...'
+        );
+         */
+        $db = $this->getDb();
+        $stmt = $db->query($sql);
+        return true;
+    }
+    /**
+     * 今日のメールを取得する（件名、時刻）
+     */
+     public function getTodayMails()
+     {
+        $sql = 'SELECT title, datetime FROM mail_for_crew WHERE datetime > curdate();';
+        // SELECT title, body FROM mail_for_crew curdate() < datetime;
+        $db = $this->getDb();
+        $stmt = $db->query($sql);
+        $return = array();
+        // $return = array('test_title','test_body');
+        while ($row = $stmt->fetch()) {
+            $return[] = array($row['title'],date('H:i',strtotime($row['datetime'])));
+        }
+        return $return;
+     }
+    /**
+     * 昨日以前のメールを、n件目からm件分取得する（件名、時刻）
+     */
 }

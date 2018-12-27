@@ -47,9 +47,63 @@ class MailDbTest extends TestCase
 		$this->assertTrue($class->isAdmin());
 	}
 	// 出勤者を取得する（文字列リスト）
-	// メールコンテンツをDBに登録する（挿入文）
-	// 今日のメールを取得する（件名、時刻）
-	// 昨日以前のメールを、n件目からm件分取得する（件名、時刻）
-	// 昨日以前の全体宛メールを、n件目からm件分取得する（件名、時刻）
-	// idからメールを取得する（件名、日時、本文）
+	public function testGetOids()
+	{
+		$class = new MailDb();
+		$class->setAcl('admin');
+		$this->assertTrue($class->isAdmin());
+		$val = $class->getOids();
+		$this->assertEquals(array(),$val);
+		$val = $class->getOids('2018-10-31');
+		$this->assertEquals(array('830','803','585'),$val);
+	}
+	public function testInsertMail()
+	{
+		$class = new MailDb();
+		$class->setAcl('admin');
+		# insertしてみる
+		$isToAll = false;
+		$title = 'test_title';
+		$body = 'test_body';
+		$this->assertTrue($class->insertMail($isToAll,$title,$body));
+	}
+	public function testGetTodayMails()
+	{
+		$class = new MailDb();
+		$class->setAcl('admin');
+		$this->assertEquals(array(
+			array('test_title',date('H:i',time()))
+		),$class->getTodayMails());
+		// ゴミが溜まったら↓これでクリアすること
+		// DELETE FROM mail_for_crew WHERE curdate() < datetime;
+	}
+	/* in progress ...
+	public function testGetArchieves()
+	{
+		$class = new MailDb();
+		$class->setAcl('admin');
+		$this->assertEquals(array(
+			array('test_title','test_body')
+		),$class->getArchieves(1));
+	}
+	 */
+	/**
+	 * 昨日以前の全体宛メールを、n件目からm件分取得する（件名、時刻）
+	public function testGetVisibleArchieves()
+	{
+		$class = new MailDb();
+		# 
+	}
+	 */
+	/**
+	 * idからメールを取得する（件名、日時、本文）
+	 * 
+	 * @var string content-id
+	public function testGetMailContent()
+	{
+		$class = new MailDb();
+		$class->setAcl('admin');
+		# 
+	}
+	 */
 }

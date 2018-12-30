@@ -23,6 +23,24 @@ if (!isset($_SERVER['PATH_INFO']) || $_SERVER['PATH_INFO']=='/') {
  * @var string
  */
 $current_path = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/src/AdminPage/index.php';
+
+function getData ($path)
+{
+	if ($path=='/index') {
+		$obj = new MailDb;
+		return $obj->getTodayMails();
+	}
+	if ($path=='/detail') {
+		$obj = new MailDb;
+		return $obj->getMailContet($_GET['id']);
+	}
+	if ($path=='/archieves') {
+		$obj = new MailDb;
+		$obj->setAcl('admin');
+		return $obj->getArchieves($_GET['page'],false);
+	}
+}
+$data = getData($path_info);
 /** 
  * reqire_page
  *
@@ -37,4 +55,9 @@ $require_page = array (
 );
 // if($_SERVER['REQUEST_METHOD']=='POST'){}
 // html読み込み
+// var_dump($require_page);
+// var_dump($path_info);
+// var_dump($_GET['id']);
+// var_dump($data);
+// exit;
 require $require_page[$path_info];

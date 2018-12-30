@@ -2,13 +2,25 @@
 <html lang="ja">
 <head>
 	<meta charset="utf-8">
+	<link rel="stylesheet" href="./html/style/style.css">
+	<title>過去のお知らせ</title>
 </head>
 <body>
-	<h2>archieves</h2>
-	<a href=<?=$current_path . '/index'?>>index</a>
-	<a href=<?=$current_path . '/detail'?>>detail</a>
-	<a href=<?=$current_path . '/archieves'?>>archieves</a>
-	<a href=<?=$current_path . '/createMail'?>>createMail</a>
-	<a href=<?=$current_path . '/sendMail'?>>sendMail</a>
+	<table>
+		<tr>
+			<th>日付</th><th>件名</th>
+		</tr>
+
+<?php
+foreach (array_keys($data) as $key) {
+	echo <<< EOT
+<tr>
+	<td>{$data[$key]['date']}</td>
+	<td><a href="../index.php/detail?id={$key}">{$data[$key]['title']}</a></td>
+</tr>
+EOT;
+}
+?>	
+	</table>
 </body>
 </html>

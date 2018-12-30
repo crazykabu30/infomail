@@ -83,22 +83,19 @@ class MailDbTest extends TestCase
 		$class = new MailDb();
 		$class->setAcl('admin');
 		$this->assertEquals(array(
-			array('test_title','test_body')
+			array('test_title','22:54'),
+			array('お知らせ[12.7 日付および時間関数]','14:35')
 		),$class->getArchieves(1));
 	}
 	 */
-	/**
-	 * 昨日以前の全体宛メールを、n件目からm件分取得する（件名、時刻）
+	/* in progress ...
 	public function testGetVisibleArchieves()
 	{
 		$class = new MailDb();
 		# 
 	}
 	 */
-	/**
-	 * idからメールを取得する（件名、日時、本文）
-	 * 
-	 * @var string content-id
+	/* in progress ...
 	public function testGetMailContent()
 	{
 		$class = new MailDb();

@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use InfoMail\Config\PdoSetting;
 
 include_once 'vendor/autoload.php';
-include_once 'infomail/Config/PdoSetting.php';
+include_once 'Config/PdoSetting.php';
 
 class PdoSettingTest extends TestCase
 {

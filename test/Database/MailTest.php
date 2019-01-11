@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use InfoMail\Database\Mail;
 
 include_once 'vendor/autoload.php';
-include_once 'infomail/src/Database/Mail.php';
+include_once 'src/Database/Mail.php';
 
 class MailTest extends TestCase 
 {

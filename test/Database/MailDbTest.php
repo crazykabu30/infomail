@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use InfoMail\Database\MailDb;
 
 include_once 'vendor/autoload.php';
-include_once 'infomail/src/Database/MailDb.php';
+include_once 'src/Database/MailDb.php';
 
 class MailDbTest extends TestCase 
 {
@@ -67,6 +67,7 @@ class MailDbTest extends TestCase
 		$body = 'test_body';
 		$this->assertTrue($class->insertMail($isToAll,$title,$body));
 	}
+	/* in progress ...
 	public function testGetTodayMails()
 	{
 		$class = new MailDb();
@@ -77,6 +78,7 @@ class MailDbTest extends TestCase
 		// ゴミが溜まったら↓これでクリアすること
 		// DELETE FROM mail_for_crew WHERE curdate() < datetime;
 	}
+	　*/
 	/* in progress ...
 	public function testGetArchieves()
 	{

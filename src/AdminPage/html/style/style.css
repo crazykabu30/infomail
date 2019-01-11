@@ -7,10 +7,8 @@ font-family: Meiryo, "メイリオ", sans-serif;
 }
 
 h2 {
-text-align: center;
 -webkit-margin-before: 0em;
 -webkit-margin-after: 0em;
-color: #598987;
 font-weight: 100;
 }
 
@@ -21,7 +19,7 @@ display: flex;
 .content-title .text {
 font-size: 1.5em;
 -webkit-margin-before: 0.83em;
--webkit-margin-after: 0.83em;
+/* -webkit-margin-after: 0.83em; */
 -webkit-margin-start: 0px;
 -webkit-margin-end: 0px;
 color: #ccc;
@@ -36,6 +34,15 @@ color: #93E3E0;
 padding-top: 10px;
 height: 42px;
 width: 42px;
+}
+
+.newinfo_title {
+margin-left: 40px;
+}
+
+.newinfo_title a {
+vertical-align: super;
+margin-left: 10px;
 }
 
 .newinfo_title img {
@@ -109,7 +116,7 @@ line-height: 40px;
 
 #open {
 display:block;
-margin: 40px auto 0;
+margin: 40px 0 10px 8px;
 border: 1px solid #598987;
 background-color: #598987;
 font-size: 1.3em;

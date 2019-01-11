@@ -22,8 +22,15 @@ if (!isset($_SERVER['PATH_INFO']) || $_SERVER['PATH_INFO']=='/') {
 /**
  * @var string
  */
-$current_path = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/src/AdminPage/index.php';
-
+$current_path = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/src/AdminPage';
+/**
+ * @var string
+ */
+$current_page = $current_path . '/index.php';
+/** 
+ * @var string path-info
+ * @return array required-content-data
+ */
 function getData ($path)
 {
 	if ($path=='/index') {
@@ -39,6 +46,11 @@ function getData ($path)
 		$obj->setAcl('admin');
 		return $obj->getArchieves($_GET['page'],false);
 	}
+	if ($path=='/createMail') {
+		$obj = new MailDb;
+		$obj->setAcl('admin');
+		return array('terminals'=>$obj->getTerminals(), 'oids'=>$obj->getOids());
+	}
 }
 $data = getData($path_info);
 /** 
@@ -47,11 +59,11 @@ $data = getData($path_info);
  * @var string
  */
 $require_page = array (
-	'/index' => './html/index.php',
-	'/detail' => './html/detail.php',
-	'/archieves' => './html/archieves.php',
-	'/createMail' => './html/createMail.php',
-	'/sendMail' => './html/sendMail.php'
+	'/index' => 'html/index.php',
+	'/detail' => 'html/detail.php',
+	'/archieves' => 'html/archieves.php',
+	'/createMail' => 'html/createMail.php',
+	'/sendMail' => 'html/sendMail.php'
 );
 // if($_SERVER['REQUEST_METHOD']=='POST'){}
 // html読み込み
@@ -60,4 +72,5 @@ $require_page = array (
 // var_dump($_GET['id']);
 // var_dump($data);
 // exit;
+
 require $require_page[$path_info];

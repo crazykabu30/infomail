@@ -6,25 +6,32 @@
 	<title>過去のお知らせ</title>
 </head>
 <body>
-	<h2>過去のお知らせ</h2>
-	<table>
-		<tr>
-			<th>日付</th><th>件名</th>
-		</tr>
-
+<div class="main">
+<div class="content-title">
+	<img class="status" src="<?=$current_path?>/html/image/Folder-open.svg">
+<!-- クラス名？ -->
+	<div class="text">過去のお知らせ</div>
+</div>
 <?php
-foreach (array_keys($data) as $key) {
+foreach (array_keys($data['contents']) as $key) {
 	echo <<< EOT
-<tr>
-	<td>{$data[$key]['date']}</td>
-	<td><a href="{$current_path}/index.php/detail?id={$key}">{$data[$key]['title']}</a></td>
-</tr>
+<div class="newinfo_title">
+<img src="{$current_path}/html/image/Mail-close.png"><a>{$data['contents'][$key]['date']}</a><a href="{$current_page}/detail?id={$key}">{$data['contents'][$key]['title']}</a>
+</div>
 EOT;
 }
 ?>
-	</table>
-
-	<!-- ページャ -->
-
+<a<?php
+if ($data['first']>0) {
+	echo ' class="active-link" href="' . $current_page . '/archieves?page=' . (string)$data['first'] . '"';
+}
+ ?>><<</a> <a<?php
+if ($data['prev']>0){echo ' class="active-link" href="' . $current_page . '/archieves?page=' . (string)$data['prev'] . '"';}
+ ?>><</a>  <?= (string)$data['cur'] ?> page  <a<?php
+if ($data['next']>0){echo ' class="active-link" href="' . $current_page . '/archieves?page=' . (string)$data['next'] . '"';}
+ ?>>></a> <a<?php
+if ($data['last']>0){echo ' class="active-link" href="' . $current_page . '/archieves?page=' . (string)$data['last'] . '"';}
+ ?>>>></a>
+</div>
 </body>
 </html>

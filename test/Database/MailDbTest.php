@@ -46,7 +46,9 @@ class MailDbTest extends TestCase
 		$class->setAcl('admin');
 		$this->assertTrue($class->isAdmin());
 	}
-	// 出勤者を取得する（文字列リスト）
+	/**
+	 * 出勤者を取得する（文字列リスト）
+	 *
 	public function testGetOids()
 	{
 		$class = new MailDb();
@@ -67,6 +69,7 @@ class MailDbTest extends TestCase
 		$body = 'test_body';
 		$this->assertTrue($class->insertMail($isToAll,$title,$body));
 	}
+	 */
 	/* in progress ...
 	public function testGetTodayMails()
 	{

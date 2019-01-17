@@ -7,8 +7,9 @@
 </head>
 <body>
 	<h2 class='title'><?=$data['title']?></h2>
-	<p><?= $data['body'] ?></p>
+	<p><?= $data['date'] ?> - <?= $data['time'] ?></p>
+	<p><?= nl2br($data['body']) ?></p>
 	<!-- パス -->
-	<a onclick="history.back();">戻る</a>
+	<button onclick="history.back();">戻る</button>
 </body>
 </html>

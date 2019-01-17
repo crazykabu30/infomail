@@ -1,8 +1,6 @@
 <?php
 
-include_once '../Database/MailDb.php';
-
-use InfoMail\Database\MailDb;
+include_once './function.php';
 
 /** 
  * PATH_INFO ether one of the followings
@@ -10,6 +8,7 @@ use InfoMail\Database\MailDb;
  * - detail
  * - archieves
  * - createMail
+ * - confirm
  * - sendMail
  * 
  * @var string
@@ -27,31 +26,6 @@ $current_path = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['
  * @var string
  */
 $current_page = $current_path . '/index.php';
-/** 
- * @var string path-info
- * @return array required-content-data
- */
-function getData ($path)
-{
-	if ($path=='/index') {
-		$obj = new MailDb;
-		return $obj->getTodayMails();
-	}
-	if ($path=='/detail') {
-		$obj = new MailDb;
-		return $obj->getMailContet($_GET['id']);
-	}
-	if ($path=='/archieves') {
-		$obj = new MailDb;
-		$obj->setAcl('admin');
-		return $obj->getArchieves($_GET['page'],false);
-	}
-	if ($path=='/createMail') {
-		$obj = new MailDb;
-		$obj->setAcl('admin');
-		return array('terminals'=>$obj->getTerminals(), 'oids'=>$obj->getOids());
-	}
-}
 $data = getData($path_info);
 /** 
  * reqire_page
@@ -63,14 +37,8 @@ $require_page = array (
 	'/detail' => 'html/detail.php',
 	'/archieves' => 'html/archieves.php',
 	'/createMail' => 'html/createMail.php',
+	'/confirm' => 'html/confirm.php',
 	'/sendMail' => 'html/sendMail.php'
 );
-// if($_SERVER['REQUEST_METHOD']=='POST'){}
-// html読み込み
-// var_dump($require_page);
-// var_dump($path_info);
-// var_dump($_GET['id']);
-// var_dump($data);
-// exit;
-
+/* html読み込み */
 require $require_page[$path_info];

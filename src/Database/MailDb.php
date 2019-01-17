@@ -9,6 +9,10 @@ include_once '../../Config/PdoSetting.php';
 
 class MailDb
 {
+	/** 
+	 *
+	 */
+    protected $contents_on_a_page = 10;
     /**
      * pdo_dns
      *
@@ -134,7 +138,6 @@ class MailDb
         $val = array();
         while ($row = $stmt->fetch()) {
             $val[$row['terminal_id']] = $row['disp_name'];
-            // $val[] = $row['terminal_id'];
         }
         $this->terminals = $val;
     }
@@ -151,6 +154,25 @@ class MailDb
         }
         return $this->terminals;
 	}
+    /** 
+     * return mail_address by thrown terminal-id
+     *
+     * @param string id
+     * @return string|bool
+     */
+    public function getAddress($id) 
+    {
+        if (!$this->isAdmin()) {return false;}
+        $sql = 'select mail_address from terminals where terminal_id = \'' . $id . '\';';
+        $db = $this->getDb();
+        $stmt = $db->query($sql);
+        $val = '';
+        while ($row = $stmt->fetch()) {
+            $val = $row['mail_address'];
+        }
+        if ($val == '') {return false;}
+        return $val;
+    }
     /**
      * @return bool
      */
@@ -187,17 +209,19 @@ class MailDb
      * @var bool isToAll
      * @var string title
      * @var string body
-     * @return bool
+     * @return array|bool
      */
     public function insertMail($isToAll,$title,$body)
     {
         if (!$this->isAdmin()) {return false;}
         if ($isToAll) {$isToAll='1';}
         if (!$isToAll) {$isToAll='0';}
-        $sql = 'INSERT INTO mail_for_crew (datetime,for_all,title,body) VALUES (now(),"' . $isToAll . '","' . $title . '","' . $body . '");';
-        // return $sql;
-        /*
-         * except as below ...
+        $db = $this->getDb();
+        $sql = 
+        'INSERT INTO mail_for_crew (datetime,for_all,title,body) 
+        VALUES (now(),"' . $isToAll . '","' . $title . '","' . $body . '");';
+        /* 
+         * excepting a statemanet like below ...
         INSERT INTO mail_for_crew (
             datetime,
             for_all,
@@ -209,16 +233,22 @@ class MailDb
             'body...'
         );
          */
-        $db = $this->getDb();
         $stmt = $db->query($sql);
-        return true;
+        $query = 'SELECT id, datetime FROM mail_for_crew WHERE title = "' . $title . '";';
+        $stmt = $db->query($query);
+        $val = array();
+        while ($row = $stmt->fetch()) {
+            $val['id'] = $row['id'];
+            $val['time'] = date('H:i',strtotime($row['datetime']));
+        }
+        return $val;
     }
     /**
      * 今日のメールを取得する（件名、時刻）
      */
      public function getTodayMails()
      {
-        $sql = 'SELECT id, title, datetime FROM mail_for_crew WHERE datetime > curdate();';
+        $sql = 'SELECT id, title, datetime FROM mail_for_crew WHERE datetime > curdate() ORDER BY id DESC;';
         // SELECT title, body FROM mail_for_crew curdate() < datetime;
         $db = $this->getDb();
         $stmt = $db->query($sql);
@@ -241,14 +271,14 @@ class MailDb
      */
     public function getArchieves($page,$val=true)
     {
-        $contents_on_a_page = 20;
+        // $this->contents_on_a_page = 10;
         // SELECT * FROM mail_for_crew WHERE datetime < curdate() ORDER BY id DESC LIMIT 20 OFFSET 20;
         // SELECT * FROM mail_for_crew WHERE datetime < curdate() for_all = '1' ORDER BY id DESC LIMIT 20 OFFSET 20;
         if ($val) {
-            $sql = 'SELECT id, title, datetime FROM mail_for_crew WHERE datetime < curdate() AND for_all = "1" ORDER BY id DESC LIMIT ' . $contents_on_a_page . ' OFFSET ' . ($page-1)*$contents_on_a_page . ';';
+            $sql = 'SELECT id, title, datetime FROM mail_for_crew WHERE datetime < curdate() AND for_all = "1" ORDER BY id DESC LIMIT ' . $this->contents_on_a_page . ' OFFSET ' . ($page-1)*$this->contents_on_a_page . ' ORDER BY id DESC;';
         } else {
             if (!$this->isAdmin()) {return false;}
-            $sql = 'SELECT id, title, datetime FROM mail_for_crew WHERE datetime < curdate() ORDER BY id DESC LIMIT ' . $contents_on_a_page . ' OFFSET ' . ($page-1)*$contents_on_a_page . ';';
+            $sql = 'SELECT id, title, datetime FROM mail_for_crew WHERE datetime < curdate() ORDER BY id DESC LIMIT ' . $this->contents_on_a_page . ' OFFSET ' . ($page-1)*$this->contents_on_a_page . ';';
         }
         $db = $this->getDb();
         $stmt = $db->query($sql);
@@ -259,6 +289,29 @@ class MailDb
                 'date' => date('Y/m/d',strtotime($row['datetime']))
             );
         }
+        unset($db);
+        return $return;
+    }
+    /**
+     * 昨日以前のメール件数を取得（整数）
+     * 
+     * @var string visibility
+     * @return int
+     */
+    public function getCountArchieves($val=true)
+    {
+        if ($val) {
+            $sql = 'SELECT COUNT(*) FROM mail_for_crew WHERE datetime < curdate() AND for_all = "1";';
+        } else {
+            if (!$this->isAdmin()) {return false;}
+            // $sql = 'SELECT COUNT(*) FROM mail_for_crew WHERE datetime < curdate()';
+            $sql = 'SELECT COUNT(*) FROM mail_for_crew WHERE datetime < curdate();';
+        }
+        $db = $this->getDb();
+        $stmt = $db->query($sql);
+        $return = 0;
+        $return = ceil($stmt->fetchColumn() / $this->contents_on_a_page);
+        unset($db);
         return $return;
     }
     /**
